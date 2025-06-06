@@ -980,6 +980,8 @@ export class FSWatcher extends EventEmitter<FSWatcherEventMap> {
  * watch('.', { atomic: true, awaitWriteFinish: true, ignored: (f, stats) => stats?.isFile() && !f.endsWith('.js') })
  */
 export function watch(paths: string | string[], options: ChokidarOptions = {}): FSWatcher {
+  console.log("watch", "paths", paths);
+
   const watcher = new FSWatcher(options);
   watcher.add(paths);
   return watcher;
