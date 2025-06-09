@@ -738,7 +738,9 @@ export class NodeFsHandler {
       } else {
         closer = this._handleFile(wh.watchPath, stats, initialAdd);
       }
+      console.log("before calling ready");
       ready();
+      console.log("after calling ready");
 
       if (closer) this.fsw._addPathCloser(path, closer);
       return false;

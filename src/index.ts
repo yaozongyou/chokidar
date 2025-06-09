@@ -478,6 +478,7 @@ export class FSWatcher extends EventEmitter<FSWatcherEventMap> {
     this._readyCount += paths.length;
     Promise.all(
       paths.map(async (path) => {
+        console.log("xxxx path", path);
         const res = await this._nodeFsHandler._addToNodeFs(
           path,
           !_internal,
@@ -485,10 +486,14 @@ export class FSWatcher extends EventEmitter<FSWatcherEventMap> {
           0,
           _origAdd
         );
+        console.log("1111 res", res);
+        console.log("before call emit ready");
         if (res) this._emitReady();
+        console.log("after call emit ready");
         return res;
       })
     ).then((results) => {
+      console.log("aaa results", results, "this.closed", this.closed);
       if (this.closed) return;
       results.forEach((item) => {
         if (item) this.add(sp.dirname(item), sp.basename(_origAdd || item));
