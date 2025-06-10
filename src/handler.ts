@@ -672,6 +672,7 @@ export class NodeFsHandler {
       }
 
       closer = this._watchWithNodeFs(dir, (dirPath, stats) => {
+        console.log("xxxxxxxx", "this.fsw._watched", this.fsw._watched);
         console.log("callback111", "dirPath", dirPath, "stats", stats, "dir", dir);
 
         // if current directory is removed, do nothing
