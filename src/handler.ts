@@ -536,20 +536,31 @@ export class NodeFsHandler {
     depth: number,
     throttler: Throttler
   ): Promise<unknown> | undefined {
+    console.log("_handleRead", "directory", directory, "initialAdd", initialAdd, "target", target, "dir", dir, "depth", depth);
+
     // Normalize the directory name on Windows
     directory = sp.join(directory, '');
 
     throttler = this.fsw._throttle('readdir', directory, 1000) as Throttler;
-    if (!throttler) return;
+    if (!throttler) {
+      console.log("111");
+      return;
+    }
 
     const previous = this.fsw._getWatchedDir(wh.path);
     const current = new Set();
+
+    console.log("previous", previous);
+
 
     let stream = this.fsw._readdirp(directory, {
       fileFilter: (entry: EntryInfo) => wh.filterPath(entry),
       directoryFilter: (entry: EntryInfo) => wh.filterDir(entry),
     });
-    if (!stream) return;
+    if (!stream) { 
+      console.log("222");
+      return; 
+    }
     stream
       .on(STR_DATA, async (entry) => {
         if (this.fsw.closed) {
@@ -571,6 +582,9 @@ export class NodeFsHandler {
           stream = undefined;
           return;
         }
+
+        console.log("item", item);
+
         // Files that present in current directory snapshot
         // but absent in previous are added to watch list and
         // emit `add` event.
@@ -636,6 +650,8 @@ export class NodeFsHandler {
     wh: WatchHelper,
     realpath: string
   ): Promise<(() => void) | undefined> {
+    console.log("_handleDir", "dir", dir, "initialAdd", initialAdd, "depth", depth);
+
     const parentDir = this.fsw._getWatchedDir(sp.dirname(dir));
     const tracked = parentDir.has(sp.basename(dir));
     if (!(initialAdd && this.fsw.options.ignoreInitial) && !target && !tracked) {
@@ -656,6 +672,8 @@ export class NodeFsHandler {
       }
 
       closer = this._watchWithNodeFs(dir, (dirPath, stats) => {
+        console.log("callback111", "dirPath", dirPath, "stats", stats, "dir", dir);
+
         // if current directory is removed, do nothing
         if (stats && stats.mtimeMs === 0) return;
 
@@ -681,6 +699,9 @@ export class NodeFsHandler {
     depth: number,
     target?: string
   ): Promise<string | false | undefined> {
+    console.log("_addToNodeFs", "path", path, "initialAdd", initialAdd, "depth", depth);
+    console.trace("1111111");
+
     const ready = this.fsw._emitReady;
     if (this.fsw._isIgnored(path) || this.fsw.closed) {
       ready();
